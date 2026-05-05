@@ -1,5 +1,3 @@
-import "./style.css";
-
 const items = [
   {
     name: "Proteinas",
@@ -39,6 +37,16 @@ const items = [
   }
 ];
 
+let cards = [];
+let score = 0;
+let matches = 0;
+
+items.forEach(item => {
+    cards.push({ type: "text", content: item.name, id: item.name, info: item.info });
+    cards.push({ type: "image", content: item, id: item.name, info: item.info });
+});
+
+cards.sort(() => 0.5 - Math.random());
 
 const board = document.getElementById("board");
 const infoBox = document.getElementById("info");
@@ -46,106 +54,69 @@ const scoreDisplay = document.getElementById("score");
 const winMessage = document.getElementById("winMessage");
 const sound = document.getElementById("matchSound");
 
-let score = 0;
-let matches = 0;
 let firstCard = null;
 let secondCard = null;
-let lockBoard = false;
+let lock = false;
 
-const cards = items
-  .flatMap((item) => [
-    { type: "text", id: item.name, content: item.name, info: item.info },
-    { type: "image", id: item.name, content: item, info: item.info }
-  ])
-  .sort(() => Math.random() - 0.5);
+cards.forEach(cardData => {
+    const card = document.createElement("div");
+    card.classList.add("card");
 
-function createCardContent(cardData) {
-  if (cardData.type === "text") {
-    return `<span>${cardData.content}</span>`;
-  }
+    let content = "";
 
-  return `
-    <img src="${cardData.content.img}" alt="${cardData.content.pair}">
-    <span>${cardData.content.pair}</span>
-  `;
-}
+    if (cardData.type === "text") {
+        content = `<span>${cardData.content}</span>`;
+    } else {
+        content = `
+            <img src="${cardData.content.img}" alt="${cardData.content.pair}">
+            <span>${cardData.content.pair}</span>
+        `;
+    }
 
-function resetTurn() {
-  firstCard = null;
-  secondCard = null;
-  lockBoard = false;
-}
-
-function updateScore() {
-  scoreDisplay.textContent = `Puntos: ${score}`;
-}
-
-function handleMatch() {
-  score += 1;
-  matches += 1;
-  updateScore();
-  infoBox.textContent = firstCard.data.info;
-  sound.currentTime = 0;
-  sound.play().catch(() => {});
-
-  firstCard.element.classList.add("matched");
-  secondCard.element.classList.add("matched");
-
-  if (matches === items.length) {
-    winMessage.textContent = "Ganaste. Completaste todos los pares.";
-  }
-
-  resetTurn();
-}
-
-function handleMismatch() {
-  window.setTimeout(() => {
-    firstCard.element.classList.remove("flipped");
-    secondCard.element.classList.remove("flipped");
-    resetTurn();
-  }, 900);
-}
-
-function onCardClick(cardElement, cardData) {
-  if (lockBoard || cardElement.classList.contains("flipped") || cardElement.classList.contains("matched")) {
-    return;
-  }
-
-  cardElement.classList.add("flipped");
-
-  if (!firstCard) {
-    firstCard = { element: cardElement, data: cardData };
-    return;
-  }
-
-  secondCard = { element: cardElement, data: cardData };
-  lockBoard = true;
-
-  if (firstCard.data.id === secondCard.data.id) {
-    handleMatch();
-    return;
-  }
-
-  handleMismatch();
-}
-
-function renderBoard() {
-  cards.forEach((cardData) => {
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "card";
-    card.setAttribute("aria-label", `Carta ${cardData.type === "text" ? cardData.content : cardData.content.pair}`);
     card.innerHTML = `
-      <div class="card-inner">
-        <div class="card-face card-front">?</div>
-        <div class="card-face card-back">${createCardContent(cardData)}</div>
-      </div>
+        <div class="card-inner">
+            <div class="card-front"></div>
+            <div class="card-back">${content}</div>
+        </div>
     `;
 
-    card.addEventListener("click", () => onCardClick(card, cardData));
-    board.appendChild(card);
-  });
-}
+    card.addEventListener("click", () => {
+        if (lock || card.classList.contains("flipped")) return;
 
-renderBoard();
-updateScore();
+        card.classList.add("flipped");
+
+        if (!firstCard) {
+            firstCard = { element: card, data: cardData };
+        } else {
+            secondCard = { element: card, data: cardData };
+            lock = true;
+
+            if (firstCard.data.id === secondCard.data.id) {
+                score++;
+                matches++;
+                scoreDisplay.textContent = "Puntos: " + score;
+                infoBox.textContent = firstCard.data.info;
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+
+                if (matches === items.length) {
+                    winMessage.textContent = "🎉 ¡Ganaste! 🎉";
+                }
+
+                firstCard = null;
+                secondCard = null;
+                lock = false;
+            } else {
+                setTimeout(() => {
+                    firstCard.element.classList.remove("flipped");
+                    secondCard.element.classList.remove("flipped");
+                    firstCard = null;
+                    secondCard = null;
+                    lock = false;
+                }, 900);
+            }
+        }
+    });
+
+    board.appendChild(card);
+});

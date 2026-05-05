@@ -1,43 +1,29 @@
 <!doctype html>
 <html lang="es">
- <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Memorama Nutricional</title>
-  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3790/3790052.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" crossorigin href="/assets/index-BRgLhaze.css">
-</head>
-
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memorama Nutricional</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3790/3790052.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script src="./main.js" defer></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BUj9rUff.css">
+  </head>
   <body>
-    <main class="app-shell">
-      <section class="game-panel">
-        <header class="game-header">
-          <div>
-            <p class="eyebrow">Juego educativo</p>
-            <h1>Memorama Nutricional</h1>
-          </div>
-          <p id="score" class="score-pill">Puntos: 0</p>
-        </header>
+    <h1>🍓 Memorama Nutricional</h1>
 
-        <div class="game-board" id="board" aria-label="Tablero del memorama"></div>
+    <p id="score">Puntos: 0</p>
 
-        <section class="bottom-panel" aria-live="polite">
-          <div class="info-box" id="info">
-            Encuentra los pares y aprende nutrición.
-          </div>
-          <div id="winMessage" class="win-message"></div>
-        </section>
-      </section>
-    </main>
+    <div class="game-board" id="board"></div>
 
-    <audio
-      id="matchSound"
-      preload="auto"
-      src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b8f6d.mp3?filename=success-1-6297.mp3"
-    ></audio>
+    <div class="info-box" id="info">
+      Encuentra los pares y aprende nutrición 💖
+    </div>
+
+    <div id="winMessage" class="win-message"></div>
+
+    <audio id="matchSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b8f6d.mp3?filename=success-1-6297.mp3"></audio>
   </body>
 </html>
